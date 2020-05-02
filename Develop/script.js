@@ -3,32 +3,46 @@ $(document).ready(function() {
 var currentT = moment().format('LLLL');
 $("#currentDay").append(currentT);
 $(".container").addClass("form-group");
+var hrRound = moment().hours();
 
-    for (i = 9; i < 18; i++){
-    var newDiv = $("<div>").addClass("row");
-    if (i > 12){
-        var label = $("<label>").text(i - 12 + ":00");
-        label.addClass("col-4-lg")
-    }
-    else {
-        var label = $("<label>").text(i + ":00");
-    }
-    //if local storage at i exists
-    if (localStorage.getItem(i)){
-        var textArea = $("<textarea>").attr("id", i).val(localStorage.getItem(i));
-        textArea.addClass("form-control");
-    }
-    else{
-        var textArea = $("<textarea>").attr("id", i);
-        textArea.addClass("form-control col-lg-4");
+
+    for (i = 9; i < 18; i++){//create 9 new divs
+        // var newDiv = $("<div>").addClass("row");
+        if (i > 12){//with labels 1:00 through 5:00
+            var label = $("<label>").text(i - 12 + ":00");
+        }
+        else {//with labels 9:00 through 12:00
+            var label = $("<label>").text(i + ":00");
+        }
+        //if local storage at i exists at the index i, retrieve it and assign it to the value of the textarea
+        if (localStorage.getItem(i)){
+            var textArea = $("<textarea>").attr("id", i).val(localStorage.getItem(i));
+            textArea.addClass("form-control");
+        }
+        else{
+            var textArea = $("<textarea>").attr("id", i);
+            textArea.addClass("form-control");
+        }
+        
+        //if hour block is in the past, grey background
+        if ( $("#" + i) < hrRound){
+            $(this).addClass("past");
+        }
+        //if hour block current, green bg
+        else if (i == hrRound){
+            $(this).addClass("present");
+        }
+        //if hour block future, red bg
+        else {
+            $(this).addClass("future");
+        }
+        
+        var button = $("<button>").addClass("submit saveBtn").text("submit");
+        $(".container").append(textArea);
+        (textArea).append(button);
     }
     
-    var button = $("<button>").addClass("submit saveBtn col-lg-4").text("submit");
-    label.append(button);
-    newDiv.append(label, textArea);
-    $(".form-horizontal").append(newDiv);
-    }
-
+    
 
     $(".submit").click(function(event){
     event.preventDefault();
